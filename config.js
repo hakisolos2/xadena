@@ -1,0 +1,40 @@
+const { Sequelize } = require('sequelize');
+require('dotenv').config();
+const env = (key, def) => process.env[key] || def;
+const DB_URL = env('DATABASE_URL', './database.db');
+
+let sequelize;
+if (DB_URL === './database.db' || !DB_URL.startsWith('postgres://')) {
+ sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.db',
+  logging: false,
+ });
+} else {
+ sequelize = new Sequelize(DB_URL, {
+  dialect: 'postgres',
+  protocol: 'postgres',
+  ssl: true,
+  dialectOptions: {
+   ssl: { require: true, rejectUnauthorized: false },
+  },
+  logging: false,
+ });
+}
+
+module.exports = {
+ BOT_INFO: process.env.BOT_INFO || 'Astro;Xstro',
+ LOGS: process.env.LOGS || true,
+ SESSION_ID: process.env.SESSION_ID || 'eyJub2lzZUtleSI6eyJwcml2YXRlIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjoia0hxaXo5dEN3YkFzdnZiQ1NKRmtKNHdrQUk3RXZyeWFpR2RyK0FLZmpucz0ifSwicHVibGljIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjoiK0QzbWY5YjVJdTg1eDJzVU5lbm4zRFVRc1hIeTlXSWxoYlp1NU44Vk9oOD0ifX0sInBhaXJpbmdFcGhlbWVyYWxLZXlQYWlyIjp7InByaXZhdGUiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOiJvUDFmYmlTNWRpSy9wRlBMQTg2bnRMU1g3MmxxeU5XVjFCUXpPWDlSNlVrPSJ9LCJwdWJsaWMiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOiJKemJadFhINDZLTnV5Rjh5ZDJzZitBZUozTmIwV3BmVFR4Qk50L3MrejJJPSJ9fSwic2lnbmVkSWRlbnRpdHlLZXkiOnsicHJpdmF0ZSI6eyJ0eXBlIjoiQnVmZmVyIiwiZGF0YSI6IllCTTlnakI4amZlVDVCWmttTm9aVHBRRVhsK0pJNkQ3MTRKcDhrRUxKbms9In0sInB1YmxpYyI6eyJ0eXBlIjoiQnVmZmVyIiwiZGF0YSI6Im4rWlpWbHR6YTEwWkNwQlk2bWJDa3hIQzN2QWZuMDRFR1dzYkNuYW1kMk09In19LCJzaWduZWRQcmVLZXkiOnsia2V5UGFpciI6eyJwcml2YXRlIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjoia0ZqUWJhcEtDbnVES1ZCZ2RwV0ZicTJ1WGdaL0V4bCtnTTl3ejMwMjVIdz0ifSwicHVibGljIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjoiU0syVHBTeDBHK1l5Z2FuSzZlbWZ6TlM3Yk5PL3pxVFA3TnhMNmdtNGV4OD0ifX0sInNpZ25hdHVyZSI6eyJ0eXBlIjoiQnVmZmVyIiwiZGF0YSI6IkdPSWdzeExvc3JFRmpJT2pYVHZEMlF5WTJ3NlpPWkNpTk1taG9ma1ViWGRVdVkxTWlSa0Q5WlBRdkxlR1JXYUt6cHNHQ1g1STBmUFB4N1RkNkVmNGhnPT0ifSwia2V5SWQiOjF9LCJyZWdpc3RyYXRpb25JZCI6NzgsImFkdlNlY3JldEtleSI6InR4N21uWGF5Q3VnSGc1QzlwTWNOUm1jMGhmWmlzSTVXdG1vS0dpR3J3TEU9IiwicHJvY2Vzc2VkSGlzdG9yeU1lc3NhZ2VzIjpbXSwibmV4dFByZUtleUlkIjo2MSwiZmlyc3RVbnVwbG9hZGVkUHJlS2V5SWQiOjYxLCJhY2NvdW50U3luY0NvdW50ZXIiOjAsImFjY291bnRTZXR0aW5ncyI6eyJ1bmFyY2hpdmVDaGF0cyI6ZmFsc2V9LCJkZXZpY2VJZCI6IlFHM0Z4SmNCUUIybjN2bm5oLWlzVUEiLCJwaG9uZUlkIjoiZDAyNzU2M2YtNTBlYi00OWI0LTg5MTUtZjJmMjhkNjVmZDU4IiwiaWRlbnRpdHlJZCI6eyJ0eXBlIjoiQnVmZmVyIiwiZGF0YSI6ImpmZFl1djN6QU12ZlBwMndiMXdENjlUNlk0TT0ifSwicmVnaXN0ZXJlZCI6dHJ1ZSwiYmFja3VwVG9rZW4iOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOiIxMHNkUjVGR2tZbzZYQ1ZkWjlSRis1ZEU2SjA9In0sInJlZ2lzdHJhdGlvbiI6e30sInBhaXJpbmdDb2RlIjoiRkdBVjlZNUciLCJtZSI6eyJpZCI6IjIzNDkxMTIxNzEwNzg6MzZAcy53aGF0c2FwcC5uZXQiLCJuYW1lIjoiS2luZyBIYWtpIMKlIn0sImFjY291bnQiOnsiZGV0YWlscyI6IkNKanQ3OXdGRUlmVjU3Z0dHQVVnQUNnQSIsImFjY291bnRTaWduYXR1cmVLZXkiOiI0dzcwdlE4NVp1Mi96WDZnUVVrRDdLR3VlOGxGMlJTb0pNOWJFUm9HckZjPSIsImFjY291bnRTaWduYXR1cmUiOiJIM2krQW1mWXpWdmhoQXhKQWJjU1NUaXN6aDEyM2ZxbEdlOWovSm1mbzdYeS9xbEtkZXFndzFTd2J2dlE2VkQ2ZWtUWll1K0Q3ajUwbVNYUE9jMEJDZz09IiwiZGV2aWNlU2lnbmF0dXJlIjoiMEk1T24yQU5XT2tlQVpuVlNkay8xUkQyTmtvdDNzZDJ5TmJ0YnNqV01XaGpCUnozMW5OcWpFZW12SUJ6UTNTVFVLUkdpWkpEKzdBSDdDVzBvQ2p3Z1E9PSJ9LCJzaWduYWxJZGVudGl0aWVzIjpbeyJpZGVudGlmaWVyIjp7Im5hbWUiOiIyMzQ5MTEyMTcxMDc4OjM2QHMud2hhdHNhcHAubmV0IiwiZGV2aWNlSWQiOjB9LCJpZGVudGlmaWVyS2V5Ijp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjoiQmVNTzlMMFBPV2J0djgxK29FRkpBK3locm52SlJka1VxQ1RQV3hFYUJxeFgifX1dLCJwbGF0Zm9ybSI6InNtYmEiLCJsYXN0QWNjb3VudFN5bmNUaW1lc3RhbXAiOjE3Mjk3NTE3MDEsIm15QXBwU3RhdGVLZXlJZCI6IkFBQUFBQnZxIn0=',
+ PREFIX: process.env.HANDLER || '.',
+ ANTI_CALL: process.env.ANTI_CALL || 'false',
+ STICKER_PACK: process.env.STICKER_PACK || 'Astro;Xstro',
+ WARN_COUNT: 3,
+ SUDO: process.env.SUDO || '',
+ AUTO_READ_MESSAGE: process.env.AUTO_READ || false,
+ AUTO_STATUS_READ: process.env.AUTO_STATUS_READ || false,
+ PRESENCE_UPDATE: process.env.PRESENCE_UPDATE || 'available',
+ MODE: process.env.MODE || 'private',
+ DATABASE_URL: DB_URL,
+ DATABASE: sequelize,
+};
